@@ -204,6 +204,7 @@
 
 ### Implementing the repositories
 * Interface that represents the functions the repository needs to implement
+* 요지 : api로부터 직접 ui가 데이터를 가져오도록 하지 않고, 데이터베이스로부터 가져오도록 하기 위함.
 
 * domain > repository vs data > repository
   * why?
@@ -224,3 +225,48 @@
     * reason : the case is either success(data) or error(message) or loading(null)
 
 * to come back... StockRepository.kt
+
+* Caching Functionality that extends StockRepository(Actual implementation)
+* data > repository > StockRepositoryImpl.kt
+  * data related logic...
+  * use Room for caching => data layer as it is directly related to database
+  * Dependency injection using dagger-hilt
+    * annotate with @Singleton at the top => in our whole app, we will use only single instance for the repository
+    * use @Inject constructor annotation in order that we don't need to put instances on our own when using the class
+    * things(constructors) needed?
+      * access to api
+      * access to database
+      * csv processing (another class... as the class is for caching data)
+
+---
+
+### Parsing Csv Data
+
+* for accomplishing SRP and DIP : should depend on abstractions(interface, abstract class), not on concretions(concrete implementation of interface or abstract class)
+  * use interface or abstract class
+  * 추상에 의존해야, 그것에 의존하는 클래스들에 변화가 발생 시 변화가 발생하는 클래스의 코드만 변경하면 되는 일이므로 이득
+  * 만약 구체적인 것에 의존하면, 그것에 의존하는 클래스들에 변화 발생 시 의존당하는 클래스에 대한 변경도 필요해짐... bad habit
+
+* csv > CSVParser.kt(Interface)
+  * interface for parsing csv file
+
+* csv > CompanyListingsParser.kt(Class)
+  * implement the CSVParser only for CompanyListing Type
+
+* OpenCsv Library
+  * CSVReader()
+  * InputStreamReader()
+  * methods of CSVReader()
+    * readAll() => list
+      * each single row consists an array,
+      * and the arrays will consist a list
+  
+* data > repository > StockRepositoryImpl.kt
+  * pass an additional constructor, parser... => companyListingsParser
+  * the type should be interface(CSVParser interface), not concrete parser class(CompanyListingParser)
+  
+---
+
+### Implementing ViewModels
+
+

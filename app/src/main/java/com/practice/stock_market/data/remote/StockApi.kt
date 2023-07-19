@@ -10,7 +10,7 @@ interface StockApi {
     // download csv file by using response body
     @GET("query?function=LISTING_STATUS")
     suspend fun getListings(
-        @Query("apikey") apiKey: String
+        @Query("apikey") apiKey: String = API_KEY
     ): ResponseBody
 
     // get response body
