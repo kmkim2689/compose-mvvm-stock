@@ -269,4 +269,33 @@
 
 ### Implementing ViewModels
 
+* The role of viewmodel
+  * responsibility to access data using abstraction(Repository interface)
+  * and mapping it to state for ui
+  * keep the state -> state is kept even though configuration changes like screen rotations
 
+* When using viewmodel with dagger hilt, @HiltViewModel should be annotated
+
+* presentation > company_listings > CompanyListingsViewModel.kt
+  * constructors
+    * StockRepository // depend on abstraction, not on concretion(StockRepositoryImpl)
+
+* presentation > company_listings > CompanyListingState.kt
+  * data class for ui state
+
+* presentation > company_listings > CompanyListingEvent.kt
+  * sealed class for different ui events that can happen on company list screen(single screen)
+  * key point : events by user actions that can lead to sth happening
+    * refresh
+    * query change on search bar
+
+---
+
+### Implementing UI
+
+* CompanyItem
+
+* CompanyListingsScreen
+  * navigator : DestinationsNavigator
+    * from compose destinations library
+  * viewModel: CompanyListingsViewModel
