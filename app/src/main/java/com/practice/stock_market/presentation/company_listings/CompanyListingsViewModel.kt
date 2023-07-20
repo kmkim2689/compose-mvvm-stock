@@ -29,6 +29,10 @@ class CompanyListingsViewModel @Inject constructor(
     // by coroutine Job
     private var searchJob: Job? = null
 
+    init {
+        getCompanyListings()
+    }
+
     // 이벤트에 따른 분기처리
     fun onEvent(event: CompanyListingsEvent) {
         when (event) {

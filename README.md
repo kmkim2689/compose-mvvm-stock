@@ -158,6 +158,8 @@
     * dto : objects that 'directly' represent the json data from the api
   * repository
 
+* di
+
 * domain
   * model
   * repository
@@ -269,10 +271,12 @@
 
 ### Implementing ViewModels
 
+* belongs to presentation layer
+
 * The role of viewmodel
   * responsibility to access data using abstraction(Repository interface)
   * and mapping it to state for ui
-  * keep the state -> state is kept even though configuration changes like screen rotations
+  * keep the state to by update -> state is kept even though configuration changes like screen rotations
 
 * When using viewmodel with dagger hilt, @HiltViewModel should be annotated
 
@@ -281,13 +285,28 @@
     * StockRepository // depend on abstraction, not on concretion(StockRepositoryImpl)
 
 * presentation > company_listings > CompanyListingState.kt
-  * data class for ui state
+  * data class for ui state // implement state class
+  * That class represents everything that belongs to particular screen
+  * 한 화면에서 변경이 될 수 있는 요소들을 모아 state들의 데이터클래스로 만드는것
+    * companies : list of company item
+    * isLoading : whether to show an progress bar or not
+    * isRefreshing
+    * searchQuery : 검색창에 들어가는 글자
 
 * presentation > company_listings > CompanyListingEvent.kt
-  * sealed class for different ui events that can happen on company list screen(single screen)
-  * key point : events by user actions that can lead to sth happening
-    * refresh
-    * query change on search bar
+  * 해당 화면에서 발생할 수 있는 이벤트들을 정의
+    * sealed class for different ui events that can happen on company list screen(single screen)
+    * key point : classes in sealed class are about the events by user actions that can lead to sth happening
+      * refresh => object
+      * query change on search bar => data class
+  * 이것을 viewmodel에서 when 조건문을 사용하여 구현 가능
+    * 이벤트에 따른 변화 분기처리
+
+* presentation > company_listings > CompanyListingsViewModel.kt
+  * fun getCompanyListings
+    * parameters
+      * query : String
+      * fetchFromRemote : Boolean
 
 ---
 
@@ -298,4 +317,29 @@
 * CompanyListingsScreen
   * navigator : DestinationsNavigator
     * from compose destinations library
-  * viewModel: CompanyListingsViewModel
+  * viewModel: CompanyListingsViewModel 
+
+---
+
+### Dependency injection
+* dependncy injection to loading the listings from the api and caching
+* root > StockApplication.kt
+  * inherit from Application()
+  * annotate with @HiltAndroidApp
+    * to let hilt get application context
+
+* AndroidManifest.xml에서 application의 name 설정
+* 
+* To use Dagger-Hilt, module should be created
+* di > AppModule.kt(Object)
+  * module : kind of container / class in which we define
+  * 여기서 주입하고자 하는 dependencies
+    * retrofit - StockApi(api로부터 데이터를 가져와야 하므로)
+    * database(room)
+  * 이를 위해, Retrofit 객체와 Room 객체를 반환하는 함수 2개를 정의한다.
+
+
+---
+### Issues
+
+https://salmonpack.tistory.com/34#google_vignette

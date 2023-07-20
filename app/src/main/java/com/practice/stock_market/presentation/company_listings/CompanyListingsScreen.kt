@@ -24,7 +24,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 @Destination(start = true)
 fun CompanyListingsScreen(
-    navigator: DestinationsNavigator,
+//    navigator: DestinationsNavigator,
     viewModel: CompanyListingsViewModel = hiltViewModel() // to get a refrence for the viewmodel
 ) {
 
